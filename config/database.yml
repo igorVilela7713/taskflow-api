@@ -1,0 +1,22 @@
+# frozen_string_literal: true
+
+# Database configuration for TaskFlow API
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  host: <%= ENV.fetch("DATABASE_HOST", "localhost") %>
+  username: <%= ENV.fetch("DATABASE_USERNAME", "taskflow") %>
+  password: <%= ENV.fetch("DATABASE_PASSWORD", "taskflow_password") %>
+
+development:
+  <<: *default
+  database: taskflow_api_development
+
+test:
+  <<: *default
+  database: taskflow_api_test
+
+production:
+  <<: *default
+  url: <%= ENV["DATABASE_URL"] %>

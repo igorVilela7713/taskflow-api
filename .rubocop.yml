@@ -1,0 +1,109 @@
+# RuboCop configuration for TaskFlow API
+
+AllCops:
+  TargetRubyVersion: 3.3
+  NewCops: enable
+  SuggestExtensions: false
+  Exclude:
+    - 'db/schema.rb'
+    - 'db/migrate/**/*'
+    - 'bin/**/*'
+    - 'node_modules/**/*'
+    - 'vendor/**/*'
+    - 'spec/**/*'
+
+# Style
+Style/StringLiterals:
+  EnforcedStyle: single_quotes
+
+Style/StringLiteralsInInterpolation:
+  EnforcedStyle: double_quotes
+
+Style/Documentation:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: true
+
+Style/HashSyntax:
+  EnforcedStyle: ruby19
+
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: no_comma
+
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: no_comma
+
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: no_comma
+
+# Layout
+Layout/LineLength:
+  Max: 120
+  AllowedPatterns:
+    - '^\s*#' # Comments can be longer
+    - '^\s*raise'
+
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+Layout/FirstArrayElementIndentation:
+  EnforcedStyle: consistent
+
+# Metrics
+Metrics/MethodLength:
+  Max: 20
+
+Metrics/AbcSize:
+  Max: 25
+
+Metrics/ClassLength:
+  Max: 150
+
+Metrics/BlockLength:
+  Max: 30
+  Exclude:
+    - 'spec/**/*'
+    - 'config/routes.rb'
+
+Metrics/ModuleLength:
+  Max: 200
+
+# Naming
+Naming/FileName:
+  Exclude:
+    - 'Gemfile'
+
+# Security
+Security/Eval:
+  Enabled: true
+
+# Rails specific
+Rails/FilePath:
+  Enabled: true
+
+Rails/InverseOf:
+  Enabled: true
+
+Rails/HasManyOrHasOneDependent:
+  Enabled: true
+
+Rails/NotNullColumn:
+  Enabled: true
+
+# Lint
+Lint/AmbiguousBlockAssociation:
+  Enabled: false
+
+Lint/MissingSuper:
+  Enabled: true
+
+Lint/ShadowingOuterLocalVariable:
+  Enabled: true
+
+# Performance
+Performance/StringInclude:
+  Enabled: true
+
+Performance/RedundantMerge:
+  Enabled: true

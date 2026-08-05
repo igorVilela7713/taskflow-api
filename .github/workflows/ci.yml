@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: taskflow
+          POSTGRES_PASSWORD: taskflow_password
+          POSTGRES_DB: taskflow_api_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgres://taskflow:taskflow_password@localhost:5432/taskflow_api_test
+      REDIS_URL: redis://localhost:6379/0
+      RAILS_ENV: test
+      JWT_SECRET_KEY: test_secret_key_for_ci
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      - name: Install dependencies
+        run: bundle install
+
+      - name: Setup database
+        run: |
+          bin/rails db:create db:migrate
+        env:
+          RAILS_ENV: test
+
+      - name: Run RuboCop
+        run: bundle exec rubocop
+
+      - name: Run RSpec tests
+        run: bundle exec rspec
+        env:
+          RAILS_ENV: test
+
+      - name: Upload coverage reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/
+          retention-days: 7

@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: taskflow-db
+    environment:
+      POSTGRES_USER: taskflow
+      POSTGRES_PASSWORD: taskflow_password
+      POSTGRES_DB: taskflow_api_development
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U taskflow"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache & Queue
+  redis:
+    image: redis:7-alpine
+    container_name: taskflow-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Rails API
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: taskflow-app
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgres://taskflow:taskflow_password@db:5432/taskflow_api_development
+      REDIS_URL: redis://redis:6379/0
+      RAILS_ENV: development
+      RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-super_secret_key_for_development}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - .:/app
+      - bundle_cache:/usr/local/bundle
+
+  # Sidekiq Background Jobs
+  sidekiq:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: taskflow-sidekiq
+    command: bundle exec sidekiq
+    environment:
+      DATABASE_URL: postgres://taskflow:taskflow_password@db:5432/taskflow_api_development
+      REDIS_URL: redis://redis:6379/0
+      RAILS_ENV: development
+      RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-super_secret_key_for_development}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - .:/app
+      - bundle_cache:/usr/local/bundle
+
+volumes:
+  postgres_data:
+  redis_data:
+  bundle_cache:
