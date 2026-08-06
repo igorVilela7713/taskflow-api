@@ -24,9 +24,6 @@ gem "rack-attack", "~> 6.7"
 # Serialization
 gem "active_model_serializers", "~> 0.10"
 
-# CORS
-gem "rack-cors"
-
 # Development & Testing
 group :development, :test do
   gem "debug", platforms: %i[mri mingw x64_mingw]
