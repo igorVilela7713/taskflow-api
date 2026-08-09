@@ -46,18 +46,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Fix bin permissions
+        run: chmod +x bin/*
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.3'
-          bundler-cache: true
+          bundler-cache: false
 
       - name: Install dependencies
-        run: bundle install
+        run: bundle install --redownload
 
       - name: Setup database
         run: |
-          bin/rails db:create db:migrate
+          bundle exec rails runner "puts 'Rails loaded successfully'"
+          bundle exec rake db:create db:migrate
         env:
           RAILS_ENV: test
 

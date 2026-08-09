@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-ruby "3.3.0"
+ruby ">= 3.3.0"
 
 # Core
 gem "rails", "~> 7.1.0"
@@ -24,9 +24,6 @@ gem "rack-attack", "~> 6.7"
 # Serialization
 gem "active_model_serializers", "~> 0.10"
 
-# CORS
-gem "rack-cors"
-
 # Development & Testing
 group :development, :test do
   gem "debug", platforms: %i[mri mingw x64_mingw]
@@ -35,6 +32,7 @@ group :development, :test do
   gem "faker", "~> 3.2"
   gem "rubocop", require: false
   gem "rubocop-rails", require: false
+  gem "rubocop-performance", require: false
   gem "rubocop-rspec", require: false
 end
 

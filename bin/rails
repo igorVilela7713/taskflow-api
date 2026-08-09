@@ -1,10 +1,7 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-# This command will automatically be run when you run "rails" with Rails gems
-# installed from the root of your application.
-
-APP_PATH = File.expand_path("config/application", __dir__)
-require_relative "config/boot"
-require "rails/command"
-Rails::Command.invoke("server")
+# Rails bin/rails wrapper
+APP_PATH = File.expand_path("../config/application", __dir__)
+require_relative "../config/boot"
+require "rails/commands"
