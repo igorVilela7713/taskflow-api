@@ -59,7 +59,9 @@ jobs:
         run: bundle install --redownload
 
       - name: Setup database
-        run: bundle exec rails db:create db:migrate
+        run: |
+          bundle exec rails runner "puts 'Rails loaded successfully'"
+          bundle exec rake db:create db:migrate
         env:
           RAILS_ENV: test
 
