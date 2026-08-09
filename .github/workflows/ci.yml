@@ -46,6 +46,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Fix bin permissions
+        run: chmod +x bin/*
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -56,8 +59,7 @@ jobs:
         run: bundle install
 
       - name: Setup database
-        run: |
-          bin/rails db:create db:migrate
+        run: bin/rails db:create db:migrate
         env:
           RAILS_ENV: test
 
